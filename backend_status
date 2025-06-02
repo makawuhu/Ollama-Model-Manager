@@ -1,0 +1,69 @@
+Ollama Model Manager - Backend Status Summary (as of June 2, 2025)
+
+Overview
+
+The backend service for the Ollama Model Manager is a FastAPI application served via Uvicorn and managed by systemd. It provides a lightweight API that scrapes the Ollama model library, extracts relevant model metadata, and serves it over a local endpoint. Caching is used to minimize upstream requests and reduce load.
+
+Current Features
+
+API Endpoint: /available-models
+
+Returns a JSON array of available models with:
+
+name: Model ID
+
+title: Display name
+
+description: Summary from Ollama
+
+params: Approximate parameter size
+
+suitable_for_4070_super: Boolean flag for NVIDIA 4070 Super suitability
+
+url: Link to Ollama model page
+
+Caching:
+
+Response is cached for 15 minutes.
+
+On subsequent requests within that window, the cache is served instead of hitting the upstream site.
+
+GPU Filtering:
+
+Compatibility is evaluated based on selected GPU type (4070 Super currently hardcoded, future plans for user selection).
+
+Logging:
+
+Uses Python's logging module for server status, HTTP fetches, and cache operations.
+
+Technologies Used
+
+Python 3.11
+
+FastAPI
+
+Uvicorn (ASGI server)
+
+httpx (for async HTTP requests)
+
+BeautifulSoup (for HTML scraping)
+
+Systemd Integration
+
+ollama-manager.service is defined and active.
+
+Logs are accessible via journalctl -u ollama-manager -f
+
+Repository
+
+GitHub: Ollama Model Manager
+
+Next Steps
+
+Add frontend interface (planned as a lightweight LXC container)
+
+Allow GPU model selection via UI
+
+Add model installation functionality using the Ollama API
+
+Implement persistent user settings
